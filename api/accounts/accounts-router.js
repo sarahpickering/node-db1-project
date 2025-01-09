@@ -5,7 +5,7 @@ const Account = require('./accounts-model');
 router.get("/", async (req, res, next) => {
   try {
     const accounts = await Account.getAll();
-    res.json("get accounts");
+    res.json(accounts);
   } catch (err) {
     next(err);
   }
@@ -18,9 +18,10 @@ router.get("/:id", md.checkAccountId, async (req, res, next) => {
 router.post("/", 
   md.checkAccountPayload, 
   md.checkAccountNameUnique, 
-  (req, res, next) => {
+  async (req, res, next) => {
   try {
-    res.json("post account");
+    const newAccount = await Account.create(req.body)
+    res.status(201).json(newAccount);
   } catch (err) {
     next(err);
   }
@@ -29,7 +30,7 @@ router.post("/",
 router.put("/:id", 
   md.checkAccountId, 
   md.checkAccountPayload, 
-  md.checkAccountNameUnique, 
+
   (req, res, next) => {
   try {
     res.json("update account");
@@ -38,9 +39,10 @@ router.put("/:id",
   }
 });
 
-router.delete("/:id", md.checkAccountId, (req, res, next) => {
+router.delete("/:id", md.checkAccountId, async (req, res, next) => {
   try {
-    res.json("delete accounts");
+    await Account.deleteById(req.params.id)
+    res.json(req.account);
   } catch (err) {
     next(err);
   }
